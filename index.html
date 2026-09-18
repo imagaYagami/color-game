@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>いろいろ まぜる (색깔 섞기 게임)</title>
+    <title>いろいろ まぜる (색 섞기)</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
     <style>
         body {
-            /* 최종 업데이트 확인용 연한 상아색 배경 */
-            background-color: #fff8e7; 
+            /* 시각 편안한 배경색 */
+            background-color: #fdfbf7; 
             font-family: 'Zen Maru Gothic', 'Malgun Gothic', sans-serif;
             display: flex;
             flex-direction: column;
@@ -16,17 +16,17 @@
             margin: 0;
             padding: 10px;
             height: 100vh;
-            touch-action: none; /* 아이패드/스마트폰 화면 스크롤 완벽 방지 */
+            touch-action: none; 
             overflow: hidden;
             user-select: none;
             -webkit-user-select: none;
         }
 
         .title {
-            font-size: 40px;
+            font-size: 38px;
             font-weight: 900;
             color: #8a2be2;
-            margin-top: 25px;
+            margin-top: 20px;
             margin-bottom: 5px;
             letter-spacing: 2px;
             text-shadow: 2px 2px 0px #fff, 4px 4px 0px #d4b8f5;
@@ -54,13 +54,23 @@
             height: 100%;
         }
 
-        /* 윗판 회전 설정 */
+        /* 
+           중요: 윗판 그룹에 mix-blend-mode를 주면 사파리(아이패드)에서
+           제대로 섞이지 않는 버그가 있어서 제외하고, 
+           대신 SVG 내부에 직접 opacity(투명도)와 fill을 겹쳐서
+           어디서든 완벽하게 보이도록 수정했습니다.
+        */
         #top-wheel {
             cursor: grab;
             transform-origin: 50% 50%;
         }
         #top-wheel:active {
             cursor: grabbing;
+        }
+
+        /* 글씨 뒤에 들어가는 둥근 배경 캡슐 */
+        .text-bg {
+            transition: fill 0.3s ease; /* 색이 부드럽게 바뀌도록 애니메이션 */
         }
     </style>
 </head>
@@ -74,73 +84,69 @@
         <!-- 1. 고정된 밑판 (Base Wheel) -->
         <svg id="base-wheel" class="wheel" viewBox="0 0 600 600">
             <defs>
-                <!-- 120도 간격으로 완벽히 겹치는 곡선 콩 모양 -->
                 <path id="blob" d="M -96.4 -114.9 A 150 150 0 0 1 96.4 -114.9" fill="none" stroke-linecap="round" />
             </defs>
+            <!-- 테두리 -->
             <circle cx="300" cy="300" r="230" fill="white" stroke="#555" stroke-width="5" />
             
-            <!-- 밑판: 빨강 (60도 방향) -->
+            <!-- 밑판 색상들 -->
+            <!-- 빨강 -->
             <g transform="translate(300,300) rotate(60)">
                 <use href="#blob" stroke="#555" stroke-width="62" />
-                <use href="#blob" stroke="#ff99cc" stroke-width="50" />
+                <use href="#blob" stroke="#ff4d6d" stroke-width="50" /> <!-- 선명한 핑크빨강 -->
                 <text x="0" y="-195" font-size="26" font-weight="900" fill="#555" text-anchor="middle">あか</text>
             </g>
-            <!-- 밑판: 노랑 (180도 방향) -->
+            <!-- 노랑 -->
             <g transform="translate(300,300) rotate(180)">
                 <use href="#blob" stroke="#555" stroke-width="62" />
-                <use href="#blob" stroke="#ffff99" stroke-width="50" />
+                <use href="#blob" stroke="#ffea00" stroke-width="50" /> <!-- 선명한 노랑 -->
                 <text x="0" y="-195" font-size="26" font-weight="900" fill="#555" text-anchor="middle">きいろ</text>
             </g>
-            <!-- 밑판: 파랑 (300도 방향) -->
+            <!-- 파랑 -->
             <g transform="translate(300,300) rotate(300)">
                 <use href="#blob" stroke="#555" stroke-width="62" />
-                <use href="#blob" stroke="#99ccff" stroke-width="50" />
+                <use href="#blob" stroke="#3a86ff" stroke-width="50" /> <!-- 선명한 파랑 -->
                 <text x="0" y="-195" font-size="26" font-weight="900" fill="#555" text-anchor="middle">あお</text>
             </g>
         </svg>
 
         <!-- 2. 돌아가는 윗판 (Top Wheel) -->
         <svg id="top-wheel" class="wheel" viewBox="0 0 600 600">
-            <!-- 윗판 베이스 (밑판이 보이게 투명 처리) -->
             <circle cx="300" cy="300" r="230" fill="transparent" stroke="#555" stroke-width="5" />
 
-            <!-- 손잡이 디자인 -->
             <g transform="translate(300,300) rotate(300)">
                 <path d="M 220 -25 C 260 -25 260 25 220 25" fill="white" stroke="#555" stroke-width="5" />
                 <path d="M 235 -10 L 235 10 M 245 -10 L 245 10" stroke="#555" stroke-width="4" stroke-linecap="round" />
             </g>
 
-            <!-- 색상이 섞이는 셀로판지 효과 영역 -->
-            <g style="mix-blend-mode: multiply;">
-                <!-- 윗판: 파랑 -->
-                <g transform="translate(300,300) rotate(60)">
-                    <use href="#blob" stroke="#555" stroke-width="62" />
-                    <use href="#blob" stroke="#99ccff" stroke-width="50" />
-                </g>
-                <!-- 윗판: 빨강 -->
-                <g transform="translate(300,300) rotate(180)">
-                    <use href="#blob" stroke="#555" stroke-width="62" />
-                    <use href="#blob" stroke="#ff99cc" stroke-width="50" />
-                </g>
-                <!-- 윗판: 노랑 -->
-                <g transform="translate(300,300) rotate(300)">
-                    <use href="#blob" stroke="#555" stroke-width="62" />
-                    <use href="#blob" stroke="#ffff99" stroke-width="50" />
-                </g>
+            <!-- 윗판 색상 (반투명 처리하여 아래판 색과 섞이게 만듦) -->
+            <!-- 윗판 파랑 -->
+            <g transform="translate(300,300) rotate(60)">
+                <use href="#blob" stroke="#3a86ff" stroke-width="50" opacity="0.75" />
+            </g>
+            <!-- 윗판 빨강 -->
+            <g transform="translate(300,300) rotate(180)">
+                <use href="#blob" stroke="#ff4d6d" stroke-width="50" opacity="0.75" />
+            </g>
+            <!-- 윗판 노랑 -->
+            <g transform="translate(300,300) rotate(300)">
+                <use href="#blob" stroke="#ffea00" stroke-width="50" opacity="0.75" />
             </g>
 
-            <!-- 섞인 결과에 따라 글씨가 자동으로 바뀌는 텍스트 영역 -->
+            <!-- 이름 + 이름 배경 캡슐 -->
             <g transform="translate(300,300) rotate(60)">
-                <text id="text-0" x="0" y="-140" font-size="24" font-weight="900" fill="#222" text-anchor="middle" style="text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff;"></text>
+                <rect id="bg-0" class="text-bg" x="-60" y="-165" width="120" height="40" rx="20" fill="white" stroke="#333" stroke-width="3" />
+                <text id="text-0" x="0" y="-136" font-size="22" font-weight="900" fill="#222" text-anchor="middle"></text>
             </g>
             <g transform="translate(300,300) rotate(180)">
-                <text id="text-1" x="0" y="-140" font-size="24" font-weight="900" fill="#222" text-anchor="middle" style="text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff;"></text>
+                <rect id="bg-1" class="text-bg" x="-60" y="-165" width="120" height="40" rx="20" fill="white" stroke="#333" stroke-width="3" />
+                <text id="text-1" x="0" y="-136" font-size="22" font-weight="900" fill="#222" text-anchor="middle"></text>
             </g>
             <g transform="translate(300,300) rotate(300)">
-                <text id="text-2" x="0" y="-140" font-size="24" font-weight="900" fill="#222" text-anchor="middle" style="text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff;"></text>
+                <rect id="bg-2" class="text-bg" x="-60" y="-165" width="120" height="40" rx="20" fill="white" stroke="#333" stroke-width="3" />
+                <text id="text-2" x="0" y="-136" font-size="22" font-weight="900" fill="#222" text-anchor="middle"></text>
             </g>
 
-            <!-- 중심축 핀 -->
             <circle cx="300" cy="300" r="14" fill="white" stroke="#555" stroke-width="5" />
             <circle cx="300" cy="300" r="4" fill="#333" />
         </svg>
@@ -152,37 +158,48 @@
         
         let isDragging = false;
         let startAngle = 0;
+        let currentRotation = -120; // 초기 상태: 같은 색끼리 포개어짐
         
-        // 아이들이 직접 돌려서 섞는 재미를 위해, 처음에는 같은 색(파랑-파랑 등)끼리 포개어져 시작하도록 -120도 회전
-        let currentRotation = -120;
-        
-        // 각도에 맞춰 윗판의 색상 이름을 실시간으로 똑똑하게 바꿔주는 기능
-        function updateColorNames(rotation) {
-            // 회전 각도를 3칸(0, 1, 2)으로 계산
+        // 회전 각도에 따라 글씨와 [글씨 배경색]을 모두 바꿔주는 함수!
+        function updateColorFeedback(rotation) {
             let steps = Math.round(rotation / 120);
             let normalizedSteps = ((steps % 3) + 3) % 3;
 
             const text0 = document.getElementById('text-0');
             const text1 = document.getElementById('text-1');
             const text2 = document.getElementById('text-2');
+            
+            const bg0 = document.getElementById('bg-0');
+            const bg1 = document.getElementById('bg-1');
+            const bg2 = document.getElementById('bg-2');
+
+            // 색상 코드 정의
+            const colorMurasaki = "#d4b8f5"; // 보라 배경
+            const colorOrange = "#ffd6a5";   // 주황 배경
+            const colorMidori = "#b7e4c7";   // 초록 배경
+            const colorAo = "#cce2ff";       // 파랑 배경
+            const colorAka = "#ffcce0";      // 빨강 배경
+            const colorKiiro = "#fff9c4";    // 노랑 배경
 
             if (normalizedSteps === 0) {
-                text0.textContent = "むらさき"; // 파랑 + 빨강 = 보라
-                text1.textContent = "おれんじ"; // 빨강 + 노랑 = 주황
-                text2.textContent = "みどり";   // 노랑 + 파랑 = 초록
+                // 섞였을 때!
+                text0.textContent = "むらさき"; bg0.style.fill = colorMurasaki; 
+                text1.textContent = "おれんじ"; bg1.style.fill = colorOrange;
+                text2.textContent = "みどり";   bg2.style.fill = colorMidori;
             } else if (normalizedSteps === 1) {
-                text0.textContent = "みどり";   // 파랑 + 노랑 = 초록
-                text1.textContent = "むらさき"; // 빨강 + 파랑 = 보라
-                text2.textContent = "おれんじ"; // 노랑 + 빨강 = 주황
+                // 한 칸 더 돌려서 섞였을 때!
+                text0.textContent = "みどり";   bg0.style.fill = colorMidori;
+                text1.textContent = "むらさき"; bg1.style.fill = colorMurasaki;
+                text2.textContent = "おれんじ"; bg2.style.fill = colorOrange;
             } else if (normalizedSteps === 2) {
-                text0.textContent = "あお";     // 파랑 + 파랑 = 파랑
-                text1.textContent = "あか";     // 빨강 + 빨강 = 빨강
-                text2.textContent = "きいろ";   // 노랑 + 노랑 = 노랑
+                // 같은 색끼리 겹쳤을 때 (초기 상태)
+                text0.textContent = "あお";     bg0.style.fill = colorAo;
+                text1.textContent = "あか";     bg1.style.fill = colorAka;
+                text2.textContent = "きいろ";   bg2.style.fill = colorKiiro;
             }
         }
 
-        // 초기 화면 세팅 적용
-        updateColorNames(currentRotation);
+        updateColorFeedback(currentRotation);
         topWheel.style.transform = `rotate(${currentRotation}deg)`;
         
         let center = { x: 0, y: 0 };
@@ -200,11 +217,11 @@
         }
 
         function onDragStart(e) {
-            e.preventDefault(); // 기본 터치 스크롤 동작 방지
+            e.preventDefault();
             isDragging = true;
             calculateCenter();
             startAngle = getAngle(e) - currentRotation;
-            topWheel.style.transition = 'none'; // 드래그 중에는 애니메이션 끄기
+            topWheel.style.transition = 'none'; 
         }
 
         function onDragMove(e) {
@@ -212,31 +229,26 @@
             e.preventDefault();
             currentRotation = getAngle(e) - startAngle;
             topWheel.style.transform = `rotate(${currentRotation}deg)`;
-            
-            // 돌리는 도중에도 실시간으로 이름 갱신
-            updateColorNames(currentRotation);
+            updateColorFeedback(currentRotation);
         }
 
         function onDragEnd() {
             if (!isDragging) return;
             isDragging = false;
             
-            // 손을 뗐을 때 가장 가까운 120도 위치로 '철컥' 하고 자석처럼 달라붙게 정렬
             const snapAngle = Math.round(currentRotation / 120) * 120;
             currentRotation = snapAngle;
             
             topWheel.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)';
             topWheel.style.transform = `rotate(${currentRotation}deg)`;
-            updateColorNames(currentRotation);
+            updateColorFeedback(currentRotation);
         }
 
-        // 마우스(PC) 이벤트 연결
         topWheel.addEventListener('mousedown', onDragStart);
         window.addEventListener('mousemove', onDragMove);
         window.addEventListener('mouseup', onDragEnd);
         window.addEventListener('mouseleave', onDragEnd);
 
-        // 터치(아이패드, 스마트폰) 이벤트 연결
         topWheel.addEventListener('touchstart', onDragStart, { passive: false });
         window.addEventListener('touchmove', onDragMove, { passive: false });
         window.addEventListener('touchend', onDragEnd);
